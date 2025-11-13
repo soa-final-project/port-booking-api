@@ -494,7 +494,42 @@
         }
     </style>
 
-    
+    <div class="header">
+        <div class="logo">SPOT4SPORT</div>
+        <div class="user-section">
+            <div class="user-menu">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" alt="User" class="user-avatar" id="userAvatar">
+                <div class="dropdown" id="dropdown">
+                    <div class="dropdown-item" onclick="window.location.href='/api/index/'">หน้าหลัก</div>
+                    <div class="dropdown-item" onclick="window.location.href='/api/my-bookings/'">ดูการจอง</div>
+                    <div class="dropdown-item logout" onclick="logout()">ออกจากระบบ</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <div class="page-header">
+            <h1>การจองของฉัน</h1>
+            <p>จัดการและติดตามการจองสนามกีฬาทั้งหมดของคุณ</p>
+        </div>
+
+        <div class="filter-tabs">
+            <div class="filter-tab active" onclick="filterBookings('all')">ทั้งหมด</div>
+            <div class="filter-tab" onclick="filterBookings('pending')">รอยืนยัน</div>
+            <div class="filter-tab" onclick="filterBookings('confirmed')">ยืนยันแล้ว</div>
+            <div class="filter-tab" onclick="filterBookings('completed')">เสร็จสิ้น</div>
+            <div class="filter-tab" onclick="filterBookings('cancelled')">ยกเลิก</div>
+        </div>
+
+        <div class="bookings-grid" id="bookingsGrid">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>กำลังโหลดข้อมูลการจอง...</p>
+            </div>
+        </div>
+    </div>
 
     <script>
         let allBookings = [];
