@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Spot4Sport</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #BF092F 0%, #8B0623 100%);
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .admin-badge {
+            background: #132440;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 3px solid white;
+            cursor: pointer;
+        }
+
+        /* Sidebar */
+        .container {
+            display: flex;
+            min-height: calc(100vh - 85px);
+        }
+
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            padding: 30px 0;
+        }
+
+        .menu-item {
+            padding: 15px 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .menu-item:hover {
+            background: #f8f9fa;
+            color: #132440;
+            border-left: 4px solid #132440;
+            padding-left: 26px;
+        }
+
+        .menu-item.active {
+            background: #132440;
+            color: white;
+            border-left: 4px solid #BF092F;
+            padding-left: 26px;
+        }
+
+        .menu-icon {
+            font-size: 20px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .page-title {
+            font-size: 32px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .page-subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon.blue {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .stat-icon.green {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .stat-icon.orange {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .stat-icon.red {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .section-title {
+            font-size: 22px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+        }
+
+        .tab.active {
+            background: #132440;
+            color: white;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 2px solid #dee2e6;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #666;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-completed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+            margin-right: 5px;
+        }
+
+        .btn-primary {
+            background: #132440;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0f1d33;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-info {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #2980b9;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .btn-large {
+            padding: 12px 24px;
+            font-size: 14px;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #132440;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #2c3e50;
+            font-size: 24px;
+        }
+
+        .modal-body {
+            margin-bottom: 25px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .header {
+                padding: 15px 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">SPOT4SPORT</div>
+            <div class="admin-badge">👨‍💼 Admin Panel</div>
+        </div>
+        <div class="header-right">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Admin" class="user-avatar">
+        </div>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="menu-item active" onclick="showSection('dashboard')">
+                <span class="menu-icon">📊</span>
+                <span>Dashboard</span>
+            </div>
+            <div class="menu-item" onclick="showSection('bookings')">
+                <span class="menu-icon">📅</span>
+                <span>จัดการการจอง</span>
+            </div>
+            <div class="menu-item" onclick="showSection('fields')">
+                <span class="menu-icon">🏟️</span>
+                <span>จัดการสนามกีฬา</span>
+            </div>
+            <div class="menu-item" onclick="showSection('users')">
+                <span class="menu-icon">👥</span>
+                <span>จัดการผู้ใช้</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='/api/index/'">
+                <span class="menu-icon">🏠</span>
+                <span>กลับหน้าหลัก</span>
+            </div>
+            <div class="menu-item" onclick="logout()" style="color: #e74c3c;">
+                <span class="menu-icon">🚪</span>
+                <span>ออกจากระบบ</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard Section -->
+            <div id="dashboardSection">
+                <h1 class="page-title">Dashboard</h1>
+                <p class="page-subtitle">ภาพรวมของระบบจองสนามกีฬา</p>
+
+                <!-- Stats Cards -->
+                <div class="stats-grid" id="statsGrid">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>กำลังโหลดข้อมูล...</p>
+                    </div>
+                </div>
+
+                <!-- Recent Bookings -->
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">การจองล่าสุด</h2>
+                        <button class="btn btn-primary" onclick="showSection('bookings')">ดูทั้งหมด</button>
+                    </div>
+                    <div id="recentBookings">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>กำลังโหลดข้อมูล...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bookings Section -->
+            <div id="bookingsSection" style="display: none;">
+                <h1 class="page-title">จัดการการจอง</h1>
+                <p class="page-subtitle">ยืนยัน แก้ไข หรือยกเลิกการจอง</p>
+
+                <div class="section">
+                    <div class="tabs">
+                        <button class="tab active" onclick="filterBookings('all')">ทั้งหมด</button>
+                        <button class="tab" onclick="filterBookings('pending')">รอยืนยัน</button>
+                        <button class="tab" onclick="filterBookings('confirmed')">ยืนยันแล้ว</button>
+                        <button class="tab" onclick="filterBookings('completed')">เสร็จสิ้น</button>
+                        <button class="tab" onclick="filterBookings('cancelled')">ยกเลิก</button>
+                    </div>
+
+                    <div class="table-container" id="bookingsTable">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>กำลังโหลดข้อมูล...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fields Section -->
+            <div id="fieldsSection" style="display: none;">
+                <h1 class="page-title">จัดการสนามกีฬา</h1>
+                <p class="page-subtitle">เพิ่ม แก้ไข หรือลบสนามกีฬา</p>
+
+                <div class="section">
+                    <div class="section-header">
+                        <h2 class="section-title">รายการสนามกีฬา</h2>
+                        <button class="btn btn-primary btn-large" onclick="window.location.href='/api/sport-field/'">
+                            ➕ เพิ่มสนามใหม่
+                        </button>
+                    </div>
+
+                    <div class="table-container" id="fieldsTable">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>กำลังโหลดข้อมูล...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Section -->
+            <div id="usersSection" style="display: none;">
+                <h1 class="page-title">จัดการผู้ใช้</h1>
+                <p class="page-subtitle">ดูข้อมูลและจัดการผู้ใช้ในระบบ</p>
+
+                <div class="section">
+                    <div class="table-container" id="usersTable">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>กำลังโหลดข้อมูล...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allBookings = [];
+        let allFields = [];
+        let currentFilter = 'all';
+
+        // API Call Function
+        async function callAPI(url, method = 'GET', data = null) {
+            const token = localStorage.getItem('access_token');
+            const config = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+            
+            if (token) {
+                config.headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            if (data) {
+                config.body = JSON.stringify(data);
+            }
+            
+            try {
+                const response = await fetch(url, config);
+                
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.removeItem('access_token');
+                        localStorage.removeItem('refresh_token');
+                        window.location.href = '/api/login-form/';
+                        return;
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API call failed:', error);
+                throw error;
+            }
+        }
+
+        // Check if user is admin
+        async function checkAdminAccess() {
+            try {
+                const user = await callAPI('/api/users/me/');
+                if (user.role !== 'admin') {
+                    alert('คุณไม่มีสิทธิ์เข้าถึงหน้านี้');
+                    window.location.href = '/api/index/';
+                    return false;
+                }
+                return true;
+            } catch (error) {
+                window.location.href = '/api/login-form/';
+                return false;
+            }
+        }
+
+        // Load Dashboard Stats
+        async function loadDashboardStats() {
+            try {
+                const [bookings, fields, users] = await Promise.all([
+                    callAPI('/api/bookings/'),
+                    callAPI('/api/sport-fields/'),
+                    callAPI('/api/users/')
+                ]);
+
+                const pendingCount = bookings.filter(b => b.status === 'pending').length;
+                const confirmedCount = bookings.filter(b => b.status === 'confirmed').length;
+
+                const statsHTML = `
+                    <div class="stat-card">
+                        <div class="stat-icon blue">📅</div>
+                        <div class="stat-label">การจองทั้งหมด</div>
+                        <div class="stat-value">${bookings.length}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">⏳</div>
+                        <div class="stat-label">รอยืนยัน</div>
+                        <div class="stat-value">${pendingCount}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">✅</div>
+                        <div class="stat-label">ยืนยันแล้ว</div>
+                        <div class="stat-value">${confirmedCount}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon red">🏟️</div>
+                        <div class="stat-label">สนามกีฬา</div>
+                        <div class="stat-value">${fields.length}</div>
+                    </div>
+                `;
+
+                document.getElementById('statsGrid').innerHTML = statsHTML;
+
+                // Load recent bookings
+                const recentBookings = bookings.slice(0, 5);
+                displayRecentBookings(recentBookings);
+
+            } catch (error) {
+                console.error('Error loading stats:', error);
+                document.getElementById('statsGrid').innerHTML = '<p style="color: red;">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>';
+            }
+        }
+
+        // Display Recent Bookings
+        function displayRecentBookings(bookings) {
+            if (bookings.length === 0) {
+                document.getElementById('recentBookings').innerHTML = '<div class="empty-state"><p>ยังไม่มีการจอง</p></div>';
+                return;
+            }
+
+            const tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ผู้จอง</th>
+                            <th>สนาม</th>
+                            <th>วันที่</th>
+                            <th>เวลา</th>
+                            <th>สถานะ</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${bookings.map(booking => `
+                            <tr>
+                                <td>#${booking.id}</td>
+                                <td>${booking.user_detail.username}</td>
+                                <td>${booking.sport_field_detail.name}</td>
+                                <td>${new Date(booking.booking_date).toLocaleDateString('th-TH')}</td>
+                                <td>${booking.start_time.substring(0,5)} - ${booking.end_time.substring(0,5)}</td>
+                                <td><span class="status-badge status-${booking.status}">${getStatusText(booking.status)}</span></td>
+                                <td>
+                                    ${booking.status === 'pending' ? 
+                                        `<button class="btn btn-success" onclick="confirmBooking(${booking.id})">ยืนยัน</button>` : ''}
+                                    ${booking.status !== 'cancelled' && booking.status !== 'completed' ?
+                                        `<button class="btn btn-danger" onclick="cancelBooking(${booking.id})">ยกเลิก</button>` : ''}
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById('recentBookings').innerHTML = tableHTML;
+        }
+
+        // Load All Bookings
+        async function loadAllBookings() {
+            try {
+                const bookings = await callAPI('/api/bookings/');
+                allBookings = bookings;
+                displayAllBookings(bookings);
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+            }
+        }
+
+        // Display All Bookings
+        function displayAllBookings(bookings) {
+            if (bookings.length === 0) {
+                document.getElementById('bookingsTable').innerHTML = '<div class="empty-state"><div class="empty-icon">📅</div><p>ไม่พบข้อมูลการจอง</p></div>';
+                return;
+            }
+
+            const tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ผู้จอง</th>
+                            <th>สนาม</th>
+                            <th>วันที่</th>
+                            <th>เวลา</th>
+                            <th>ราคา</th>
+                            <th>สถานะ</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${bookings.map(booking => `
+                            <tr>
+                                <td>#${booking.id}</td>
+                                <td>${booking.user_detail.username}</td>
+                                <td>${booking.sport_field_detail.name}</td>
+                                <td>${new Date(booking.booking_date).toLocaleDateString('th-TH')}</td>
+                                <td>${booking.start_time.substring(0,5)} - ${booking.end_time.substring(0,5)}</td>
+                                <td>฿${parseFloat(booking.total_price).toFixed(2)}</td>
+                                <td><span class="status-badge status-${booking.status}">${getStatusText(booking.status)}</span></td>
+                                <td>
+                                    <button class="btn btn-info" onclick="viewBookingDetail(${booking.id})">ดู</button>
+                                    ${booking.status === 'pending' ? 
+                                        `<button class="btn btn-success" onclick="confirmBooking(${booking.id})">ยืนยัน</button>` : ''}
+                                    ${booking.status !== 'cancelled' && booking.status !== 'completed' ?
+                                        `<button class="btn btn-danger" onclick="cancelBookingAdmin(${booking.id})">ยกเลิก</button>` : ''}
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById('bookingsTable').innerHTML = tableHTML;
+        }
+
+        // Filter Bookings
+        function filterBookings(status) {
+            currentFilter = status;
+            
+            // Update active tab
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            let filtered = allBookings;
+            if (status !== 'all') {
+                filtered = allBookings.filter(b => b.status === status);
+            }
+            
+            displayAllBookings(filtered);
+        }
+
+        // Confirm Booking
+        async function confirmBooking(bookingId) {
+            if (!confirm('ยืนยันการจองนี้?')) return;
+
+            try {
+                await callAPI(`/api/bookings/${bookingId}/confirm/`, 'POST');
+                alert('ยืนยันการจองสำเร็จ!');
+                loadDashboardStats();
+                loadAllBookings();
+            } catch (error) {
+                alert('เกิดข้อผิดพลาด: ' + error.message);
+            }
+        }
+
+        // Cancel Booking (Admin)
+        async function cancelBookingAdmin(bookingId) {
+            if (!confirm('ยกเลิกการจองนี้?')) return;
+
+            try {
+                await callAPI(`/api/bookings/${bookingId}/cancel/`, 'POST');
+                alert('ยกเลิกการจองสำเร็จ!');
+                loadDashboardStats();
+                loadAllBookings();
+            } catch (error) {
+                alert('เกิดข้อผิดพลาด: ' + error.message);
+            }
+        }
+
+        // View Booking Detail
+        function viewBookingDetail(bookingId) {
+            const booking = allBookings.find(b => b.id === bookingId);
+            if (!booking) return;
+
+            const modalHTML = `
+                <div class="modal" onclick="if(event.target === this) closeModal()">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>รายละเอียดการจอง #${booking.id}</h2>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>ผู้จอง:</strong> ${booking.user_detail.username}</p>
+                            <p><strong>อีเมล:</strong> ${booking.user_detail.email}</p>
+                            <p><strong>เบอร์โทร:</strong> ${booking.user_detail.phone_number || '-'}</p>
+                            <hr style="margin: 15px 0;">
+                            <p><strong>สนาม:</strong> ${booking.sport_field_detail.name}</p>
+                            <p><strong>ประเภท:</strong> ${booking.sport_field_detail.sport_type_display}</p>
+                            <p><strong>วันที่จอง:</strong> ${new Date(booking.booking_date).toLocaleDateString('th-TH', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                                weekday: 'long'
+                            })}</p>
+                            <p><strong>เวลา:</strong> ${booking.start_time.substring(0,5)} - ${booking.end_time.substring(0,5)} น.</p>
+                            <p><strong>ระยะเวลา:</strong> ${booking.hours} ชั่วโมง</p>
+                            <p><strong>ราคา:</strong> ฿${parseFloat(booking.total_price).toFixed(2)}</p>
+                            <p><strong>สถานะ:</strong> <span class="status-badge status-${booking.status}">${getStatusText(booking.status)}</span></p>
+                            ${booking.note ? `<p><strong>หมายเหตุ:</strong> ${booking.note}</p>` : ''}
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn btn-primary" onclick="closeModal()">ปิด</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        // Load Sport Fields
+        async function loadSportFields() {
+            try {
+                const fields = await callAPI('/api/sport-fields/');
+                allFields = fields;
+                displaySportFields(fields);
+            } catch (error) {
+                console.error('Error loading fields:', error);
+            }
+        }
+
+        // Display Sport Fields
+        function displaySportFields(fields) {
+            if (fields.length === 0) {
+                document.getElementById('fieldsTable').innerHTML = '<div class="empty-state"><div class="empty-icon">🏟️</div><p>ไม่พบข้อมูลสนามกีฬา</p></div>';
+                return;
+            }
+
+            const tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>ชื่อสนาม</th>
+                            <th>ประเภท</th>
+                            <th>ความจุ</th>
+                            <th>ราคา/ชม.</th>
+                            <th>สถานะ</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${fields.map(field => `
+                            <tr>
+                                <td>#${field.id}</td>
+                                <td>${field.name}</td>
+                                <td>${field.sport_type_display}</td>
+                                <td>${field.capacity} คน</td>
+                                <td>฿${parseFloat(field.price_per_hour).toFixed(2)}</td>
+                                <td><span class="status-badge ${field.status === 'available' ? 'status-confirmed' : 'status-cancelled'}">${field.status_display}</span></td>
+                                <td>
+                                    <button class="btn btn-info" onclick="viewFieldDetail(${field.id})">ดู</button>
+                                    <button class="btn btn-warning" onclick="editField(${field.id})">แก้ไข</button>
+                                    <button class="btn btn-danger" onclick="deleteField(${field.id})">ลบ</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById('fieldsTable').innerHTML = tableHTML;
+        }
+
+        // Edit Field
+        function editField(fieldId) {
+            window.location.href = `/api/edit-sport-field/?id=${fieldId}`;
+        }
+
+        // Delete Field
+        async function deleteField(fieldId) {
+            if (!confirm('คุณแน่ใจว่าต้องการลบสนามนี้? การกระทำนี้ไม่สามารถย้อนกลับได้')) {
+                return;
+            }
+
+            try {
+                await callAPI(`/api/sport-fields/${fieldId}/`, 'DELETE');
+                alert('ลบสนามกีฬาสำเร็จ!');
+                loadSportFields();
+                loadDashboardStats(); // Reload stats to update field count
+            } catch (error) {
+                alert('เกิดข้อผิดพลาดในการลบสนาม: ' + error.message);
+            }
+        }
+
+        // View Field Detail
+        async function viewFieldDetail(fieldId) {
+            try {
+                const field = await callAPI(`/api/sport-fields/${fieldId}/`);
+                
+                const modalHTML = `
+                    <div class="modal" onclick="if(event.target === this) closeModal()">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h2>${field.name}</h2>
+                            </div>
+                            <div class="modal-body">
+                                ${field.image ? `<img src="${field.image}" alt="${field.name}" style="width: 100%; border-radius: 10px; margin-bottom: 15px;">` : ''}
+                                <p><strong>ประเภทกีฬา:</strong> ${field.sport_type_display}</p>
+                                <p><strong>ความจุ:</strong> ${field.capacity} คน</p>
+                                <p><strong>ราคา:</strong> ฿${parseFloat(field.price_per_hour).toFixed(2)}/ชั่วโมง</p>
+                                <p><strong>สถานะ:</strong> <span class="status-badge ${field.status === 'available' ? 'status-confirmed' : 'status-cancelled'}">${field.status_display}</span></p>
+                                <p><strong>รายละเอียด:</strong> ${field.description || 'ไม่มีรายละเอียด'}</p>
+                                <p style="font-size: 12px; color: #999; margin-top: 15px;"><strong>สร้างเมื่อ:</strong> ${new Date(field.created_at).toLocaleString('th-TH')}</p>
+                            </div>
+                            <div class="modal-actions">
+                                <button class="btn btn-warning" onclick="editField(${field.id})">แก้ไข</button>
+                                <button class="btn btn-danger" onclick="deleteField(${field.id})">ลบ</button>
+                                <button class="btn btn-primary" onclick="closeModal()">ปิด</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+            } catch (error) {
+                alert('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+            }
+        }
+
+        // Load Users
+        async function loadUsers() {
+            try {
+                const users = await callAPI('/api/users/');
+                displayUsers(users);
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        // Display Users
+        function displayUsers(users) {
+            if (users.length === 0) {
+                document.getElementById('usersTable').innerHTML = '<div class="empty-state"><div class="empty-icon">👥</div><p>ไม่พบข้อมูลผู้ใช้</p></div>';
+                return;
+            }
+
+            const tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>ชื่อ-นามสกุล</th>
+                            <th>อีเมล</th>
+                            <th>เบอร์โทร</th>
+                            <th>บทบาท</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${users.map(user => `
+                            <tr>
+                                <td>#${user.id}</td>
+                                <td>${user.username}</td>
+                                <td>${user.first_name} ${user.last_name}</td>
+                                <td>${user.email}</td>
+                                <td>${user.phone_number || '-'}</td>
+                                <td><span class="status-badge ${user.role === 'admin' ? 'status-confirmed' : 'status-pending'}">${user.role === 'admin' ? 'Admin' : 'User'}</span></td>
+                                <td>
+                                    <button class="btn btn-info" onclick="viewUserBookings(${user.id}, '${user.username}')">ดูการจอง</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById('usersTable').innerHTML = tableHTML;
+        }
+
+        // View User Bookings
+        async function viewUserBookings(userId, username) {
+            try {
+                const bookings = await callAPI('/api/bookings/');
+                const userBookings = bookings.filter(b => b.user_detail.id === userId);
+
+                const modalHTML = `
+                    <div class="modal" onclick="if(event.target === this) closeModal()">
+                        <div class="modal-content" style="max-width: 700px;">
+                            <div class="modal-header">
+                                <h2>การจองของ ${username}</h2>
+                            </div>
+                            <div class="modal-body">
+                                ${userBookings.length === 0 ? 
+                                    '<p style="text-align: center; color: #999;">ยังไม่มีการจอง</p>' :
+                                    `<table style="font-size: 13px;">
+                                        <thead>
+                                            <tr>
+                                                <th>สนาม</th>
+                                                <th>วันที่</th>
+                                                <th>เวลา</th>
+                                                <th>ราคา</th>
+                                                <th>สถานะ</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${userBookings.map(booking => `
+                                                <tr>
+                                                    <td>${booking.sport_field_detail.name}</td>
+                                                    <td>${new Date(booking.booking_date).toLocaleDateString('th-TH', {month: 'short', day: 'numeric'})}</td>
+                                                    <td>${booking.start_time.substring(0,5)}-${booking.end_time.substring(0,5)}</td>
+                                                    <td>฿${parseFloat(booking.total_price).toFixed(0)}</td>
+                                                    <td><span class="status-badge status-${booking.status}">${getStatusText(booking.status)}</span></td>
+                                                </tr>
+                                            `).join('')}
+                                        </tbody>
+                                    </table>`
+                                }
+                            </div>
+                            <div class="modal-actions">
+                                <button class="btn btn-primary" onclick="closeModal()">ปิด</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', modalHTML);
+            } catch (error) {
+                alert('เกิดข้อผิดพลาดในการโหลดข้อมูล');
+            }
+        }
+
+        // Helper Functions
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': 'รอยืนยัน',
+                'confirmed': 'ยืนยันแล้ว',
+                'cancelled': 'ยกเลิก',
+                'completed': 'เสร็จสิ้น'
+            };
+            return statusMap[status] || status;
+        }
+
+        function closeModal() {
+            const modal = document.querySelector('.modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function logout() {
+            if (confirm('ต้องการออกจากระบบ?')) {
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/api/login-form/';
+            }
+        }
+
+        // Show Section
+        function showSection(section) {
+            // Hide all sections
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('bookingsSection').style.display = 'none';
+            document.getElementById('fieldsSection').style.display = 'none';
+            document.getElementById('usersSection').style.display = 'none';
+
+            // Update active menu
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.menu-item').classList.add('active');
+
+            // Show selected section
+            switch(section) {
+                case 'dashboard':
+                    document.getElementById('dashboardSection').style.display = 'block';
+                    loadDashboardStats();
+                    break;
+                case 'bookings':
+                    document.getElementById('bookingsSection').style.display = 'block';
+                    loadAllBookings();
+                    break;
+                case 'fields':
+                    document.getElementById('fieldsSection').style.display = 'block';
+                    loadSportFields();
+                    break;
+                case 'users':
+                    document.getElementById('usersSection').style.display = 'block';
+                    loadUsers();
+                    break;
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async function() {
+            const isAdmin = await checkAdminAccess();
+            if (isAdmin) {
+                loadDashboardStats();
+            }
+        });
+
+        // Close modal on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

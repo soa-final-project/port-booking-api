@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สมัครสมาชิก - Spot4Sport</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .register-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 400px;
+            width: 100%;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .register-header {
+            background: #BF092F;
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .register-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .register-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .register-body {
+            padding: 40px 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group label .required {
+            color: #e74c3c;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #132440;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #999;
+        }
+
+        .password-toggle {
+            position: relative;
+        }
+
+        .password-toggle input {
+            padding-right: 45px;
+        }
+
+        .password-toggle-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+            font-size: 18px;
+            padding: 5px;
+        }
+
+        .password-toggle-btn:hover {
+            color: #667eea;
+        }
+
+        .password-strength {
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .password-strength-bar.weak {
+            width: 33%;
+            background: #e74c3c;
+        }
+
+        .password-strength-bar.medium {
+            width: 66%;
+            background: #f39c12;
+        }
+
+        .password-strength-bar.strong {
+            width: 100%;
+            background: #27ae60;
+        }
+
+        .password-hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .terms-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .terms-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .terms-checkbox label {
+            font-size: 14px;
+            color: #666;
+            margin: 0;
+        }
+
+        .terms-checkbox a {
+            color: #132440;
+            text-decoration: none;
+        }
+
+        .terms-checkbox a:hover {
+            text-decoration: underline;
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 14px;
+            background: #132440;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .register-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: #132440;
+        }
+
+        .register-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .register-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 100%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 15px;
+            color: #666;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .login-link {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .login-link a {
+            color: #132440;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .success-message {
+            background: #efe;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .field-error {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .register-container {
+                border-radius: 15px;
+            }
+
+            .register-header {
+                padding: 30px 20px;
+            }
+
+            .register-header h1 {
+                font-size: 24px;
+            }
+
+            .register-body {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="register-header">
+            <h1>Spot4Sport</h1>
+        </div>
+
+        <div class="register-body">
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+
+            <form id="registerForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="username">
+                            ชื่อผู้ใช้ <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="text" 
+                            id="username" 
+                            name="username" 
+                            placeholder=""
+                            required
+                            minlength="3"
+                        >
+                        <div class="field-error" id="usernameError"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">
+                            อีเมล <span class="required">*</span>
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            placeholder=""
+                            required
+                        >
+                        <div class="field-error" id="emailError"></div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">ชื่อจริง</label>
+                        <input 
+                            type="text" 
+                            id="firstName" 
+                            name="first_name" 
+                            placeholder=""
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lastName">นามสกุล</label>
+                        <input 
+                            type="text" 
+                            id="lastName" 
+                            name="last_name" 
+                            placeholder=""
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phoneNumber">เบอร์โทรศัพท์</label>
+                    <input 
+                        type="tel" 
+                        id="phoneNumber" 
+                        name="phone_number" 
+                        placeholder=""
+                        pattern="[0-9]{10}"
+                        maxlength="10"
+                    >
+                    <div class="field-error" id="phoneError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">
+                        รหัสผ่าน <span class="required">*</span>
+                    </label>
+                    <div class="password-toggle">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            placeholder=""
+                            required
+                            minlength="8"
+                        >
+                        <button type="button" class="password-toggle-btn" id="togglePassword">
+                            👁️
+                        </button>
+                    </div>
+                    <div class="password-strength">
+                        <div class="password-strength-bar" id="strengthBar"></div>
+                    </div>
+                    <div class="password-hint">
+                        รหัสผ่านควรมีอย่างน้อย 8 ตัวอักษร รวมตัวพิมพ์ใหญ่และตัวเลข
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">
+                        ยืนยันรหัสผ่าน <span class="required">*</span>
+                    </label>
+                    <div class="password-toggle">
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            name="confirm_password" 
+                            placeholder=""
+                            required
+                        >
+                        <button type="button" class="password-toggle-btn" id="toggleConfirmPassword">
+                            👁️
+                        </button>
+                    </div>
+                    <div class="field-error" id="confirmPasswordError"></div>
+                </div>
+
+                <div class="terms-checkbox">
+                    <input type="checkbox" id="terms" name="terms" required>
+                    <label for="terms">
+                        ฉันยอมรับ <a href="#" target="_blank">ข้อกำหนดและเงื่อนไข</a> 
+                        และ <a href="#" target="_blank">นโยบายความเป็นส่วนตัว</a>
+                    </label>
+                </div>
+
+                <button type="submit" class="register-btn" id="submitBtn">
+                    สมัครสมาชิก
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>หรือ</span>
+            </div>
+
+            <div class="login-link">
+                มีบัญชีอยู่แล้ว? <a href="/api/login-form/">เข้าสู่ระบบ</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle password visibility
+        function setupPasswordToggle(buttonId, inputId) {
+            const toggleBtn = document.getElementById(buttonId);
+            const input = document.getElementById(inputId);
+
+            toggleBtn.addEventListener('click', function() {
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+                this.textContent = type === 'password' ? '👁️' : '🙈';
+            });
+        }
+
+        setupPasswordToggle('togglePassword', 'password');
+        setupPasswordToggle('toggleConfirmPassword', 'confirmPassword');
+
+        // Password strength checker
+        const passwordInput = document.getElementById('password');
+        const strengthBar = document.getElementById('strengthBar');
+
+        passwordInput.addEventListener('input', function() {
+            const password = this.value;
+            let strength = 0;
+
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+            if (password.match(/[0-9]/)) strength++;
+            if (password.match(/[^a-zA-Z0-9]/)) strength++;
+
+            strengthBar.className = 'password-strength-bar';
+            
+            if (strength <= 1) {
+                strengthBar.classList.add('weak');
+            } else if (strength <= 3) {
+                strengthBar.classList.add('medium');
+            } else {
+                strengthBar.classList.add('strong');
+            }
+
+            if (password.length === 0) {
+                strengthBar.className = 'password-strength-bar';
+            }
+        });
+
+        // Phone number validation
+        const phoneInput = document.getElementById('phoneNumber');
+        phoneInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        // Form validation and submission
+        const registerForm = document.getElementById('registerForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const submitBtn = document.getElementById('submitBtn');
+
+        registerForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Hide previous messages
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            document.querySelectorAll('.field-error').forEach(el => el.style.display = 'none');
+
+            // Get form data
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+
+            // Client-side validation
+            let hasError = false;
+
+            // Check password match
+            if (password !== confirmPassword) {
+                document.getElementById('confirmPasswordError').textContent = 'รหัสผ่านไม่ตรงกัน';
+                document.getElementById('confirmPasswordError').style.display = 'block';
+                hasError = true;
+            }
+
+            // Check phone number format
+            if (phoneNumber && phoneNumber.length !== 10) {
+                document.getElementById('phoneError').textContent = 'เบอร์โทรศัพท์ต้องเป็น 10 หลัก';
+                document.getElementById('phoneError').style.display = 'block';
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'กำลังสมัครสมาชิก...';
+
+            try {
+                const response = await fetch('/api/users/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        email: email,
+                        password: password,
+                        first_name: firstName,
+                        last_name: lastName,
+                        phone_number: phoneNumber
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Show success message
+                    successMessage.textContent = 'สมัครสมาชิกสำเร็จ! กำลังนำคุณไปยังหน้าเข้าสู่ระบบ...';
+                    successMessage.style.display = 'block';
+
+                    // Redirect to login page
+                    setTimeout(() => {
+                        window.location.href = '/api/login-form/';
+                    }, 2000);
+                } else {
+                    // Show error messages
+                    let errorMsg = '';
+                    
+                    if (data.username) {
+                        document.getElementById('usernameError').textContent = data.username[0];
+                        document.getElementById('usernameError').style.display = 'block';
+                        errorMsg = 'ชื่อผู้ใช้นี้ถูกใช้งานแล้ว';
+                    }
+                    
+                    if (data.email) {
+                        document.getElementById('emailError').textContent = data.email[0];
+                        document.getElementById('emailError').style.display = 'block';
+                        errorMsg = 'อีเมลนี้ถูกใช้งานแล้ว';
+                    }
+
+                    if (data.password) {
+                        errorMsg = data.password[0];
+                    }
+
+                    errorMessage.textContent = errorMsg || 'เกิดข้อผิดพลาด กรุณาตรวจสอบข้อมูลอีกครั้ง';
+                    errorMessage.style.display = 'block';
+
+                    // Re-enable submit button
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'สมัครสมาชิก';
+                }
+            } catch (error) {
+                errorMessage.textContent = 'เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง';
+                errorMessage.style.display = 'block';
+
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'สมัครสมาชิก';
+            }
+        });
+
+        // Clear error messages when user starts typing
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', () => {
+                errorMessage.style.display = 'none';
+                document.querySelectorAll('.field-error').forEach(el => el.style.display = 'none');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPOT4SPORT - หน้าแรก</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        /* Content Area */
+        .content {
+            padding: 50px 60px;
+            max-width: 1500px;
+            margin: 0 auto;
+            background-color: #f8f9fa;
+        }
+
+        .fields-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 35px;
+            padding: 30px 0;
+        }
+
+        .field-card {
+            position: relative;
+            background-color: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            height: 280px;
+        }
+
+        .field-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+        }
+
+        .field-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .field-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        }
+
+        .field-info {
+            padding: 25px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.6) 70%, transparent 100%);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+
+        .field-info h3 {
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .field-price {
+            color: white;
+            font-size: 16px;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .field-type {
+            color: #ddd;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #BF092F;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #132440;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #132440;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-secondary {
+            background: #BF092F;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .fields-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .fields-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .content {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Include Menu -->
+    {% include 'bookings/menu.html' %}
+
+    <!-- Content Area -->
+    <div class="content">
+        <h2>สนามกีฬาที่พร้อมให้บริการ</h2>
+        <div class="fields-grid" id="fieldsGrid">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>กำลังโหลดข้อมูลสนามกีฬา...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ฟังก์ชันพื้นฐานสำหรับเรียก API
+        async function callAPI(url, method = 'GET', data = null) {
+            const token = localStorage.getItem('access_token');
+            const config = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+            
+            // เพิ่ม token ถ้ามี
+            if (token) {
+                config.headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            // เพิ่ม data ถ้ามี (สำหรับ POST, PUT)
+            if (data) {
+                config.body = JSON.stringify(data);
+            }
+            
+            try {
+                const response = await fetch(url, config);
+                
+                // ตรวจสอบว่า response OK หรือไม่
+                if (!response.ok) {
+                    // ถ้า token หมดอายุ
+                    if (response.status === 401) {
+                        localStorage.removeItem('access_token');
+                        localStorage.removeItem('refresh_token');
+                        window.location.href = '/api/login-form/';
+                        return;
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API call failed:', error);
+                throw error;
+            }
+        }
+
+        // ตรวจสอบการล็อกอิน
+        function checkAuthentication() {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = '/api/login-form/';
+                return false;
+            }
+            return true;
+        }
+
+        // โหลดข้อมูลสนามกีฬา
+        async function loadFields(sportType = '') {
+            if (!checkAuthentication()) return;
+
+            const grid = document.getElementById('fieldsGrid');
+            
+            try {
+                grid.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>กำลังโหลดข้อมูลสนามกีฬา...</p>
+                    </div>
+                `;
+                
+                let url = '/api/sport-fields/';
+                if (sportType) {
+                    url += `?sport_type=${sportType}`;
+                }
+                
+                const fields = await callAPI(url);
+                
+                if (fields.length === 0) {
+                    grid.innerHTML = '<p style="text-align: center; padding: 40px; color: #999;">ไม่พบสนามกีฬา</p>';
+                    return;
+                }
+                
+                // แสดงข้อมูลในรูปแบบการ์ด
+                grid.innerHTML = fields.map(field => {
+                    const imageUrl = field.image || 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&h=400&fit=crop';
+                    const price = parseFloat(field.price_per_hour);
+                    const priceDisplay = price % 1 === 0 ? price.toFixed(0) : price.toFixed(2);
+                    
+                    return `
+                        <div class="field-card" onclick="viewFieldDetail(${field.id})">
+                            <img src="${imageUrl}" 
+                                 alt="${field.name}" 
+                                 onerror="this.src='https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&h=400&fit=crop'">
+                            <div class="field-badge">${field.status_display || 'พร้อมใช้งาน'}</div>
+                            <div class="field-info">
+                                <h3>${field.name}</h3>
+                                <p class="field-price">฿${priceDisplay}/ชม</p>
+                                <p class="field-type">${field.sport_type_display || field.sport_type}</p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+            } catch (error) {
+                console.error('Error loading fields:', error);
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                        <p style="color: #e74c3c; font-size: 18px; margin-bottom: 10px;">⚠️ เกิดข้อผิดพลาดในการโหลดข้อมูล</p>
+                        <p style="color: #999; margin-bottom: 20px;">${error.message}</p>
+                        <button class="btn btn-primary" onclick="loadFields()">ลองอีกครั้ง</button>
+                    </div>
+                `;
+            }
+        }
+
+        // ดูรายละเอียดสนาม
+        async function viewFieldDetail(fieldId) {
+            try {
+                const field = await callAPI(`/api/sport-fields/${fieldId}/`);
+                showFieldModal(field);
+            } catch (error) {
+                alert('ไม่สามารถโหลดข้อมูลสนามได้: ' + error.message);
+            }
+        }
+
+        // แสดง Modal ด้วยข้อมูลสนาม
+        function showFieldModal(field) {
+            const imageUrl = field.image || 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&h=400&fit=crop';
+            const price = parseFloat(field.price_per_hour);
+            const priceDisplay = price % 1 === 0 ? price.toFixed(0) : price.toFixed(2);
+            
+            const modalHTML = `
+                <div class="modal">
+                    <div class="modal-content">
+                        <h2>${field.name}</h2>
+                        <img src="${imageUrl}" 
+                             alt="${field.name}" 
+                             style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px; margin: 15px 0;"
+                             onerror="this.src='https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=600&h=400&fit=crop'">
+                        
+                        <div style="margin: 15px 0;">
+                            <p><strong>ประเภท:</strong> ${field.sport_type_display || field.sport_type}</p>
+                            <p><strong>ความจุ:</strong> ${field.capacity} คน</p>
+                            <p><strong>ราคา:</strong> ฿${priceDisplay}/ชม</p>
+                            <p><strong>สถานะ:</strong> ${field.status_display || field.status}</p>
+                            <p><strong>รายละเอียด:</strong> ${field.description || 'ไม่มีรายละเอียด'}</p>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; margin-top: 20px;">
+                            <button class="btn btn-secondary" onclick="closeModal()">ปิด</button>
+                            <button class="btn btn-primary" onclick="openBookingForm(${field.id})">จองสนาม</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        // ฟอร์มการจอง
+        function openBookingForm(fieldId) {
+            closeModal();
+            
+            // ตั้งค่าวันที่เริ่มต้นเป็นวันพรุ่งนี้
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const minDate = tomorrow.toISOString().split('T')[0];
+            
+            const bookingHTML = `
+                <div class="modal">
+                    <div class="modal-content">
+                        <h2>จองสนาม</h2>
+                        <form id="bookingForm">
+                            <input type="hidden" id="fieldId" value="${fieldId}">
+                            
+                            <div class="form-group">
+                                <label for="bookingDate">วันที่จอง:</label>
+                                <input type="date" id="bookingDate" required min="${minDate}">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="startTime">เวลาเริ่ม:</label>
+                                <input type="time" id="startTime" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="endTime">เวลาสิ้นสุด:</label>
+                                <input type="time" id="endTime" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="note">หมายเหตุ (ไม่จำเป็น):</label>
+                                <textarea id="note" placeholder="ระบุความต้องการเพิ่มเติม..."></textarea>
+                            </div>
+                            
+                            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                                <button type="submit" class="btn btn-primary">ยืนยันการจอง</button>
+                                <button type="button" class="btn btn-secondary" onclick="closeModal()">ยกเลิก</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', bookingHTML);
+            
+            document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const bookingData = {
+                    sport_field: parseInt(document.getElementById('fieldId').value),
+                    booking_date: document.getElementById('bookingDate').value,
+                    start_time: document.getElementById('startTime').value,
+                    end_time: document.getElementById('endTime').value,
+                    note: document.getElementById('note').value
+                };
+                
+                try {
+                    const result = await callAPI('/api/bookings/', 'POST', bookingData);
+                    alert('จองสนามสำเร็จ!');
+                    closeModal();
+                    loadFields();
+                } catch (error) {
+                    alert('จองสนามไม่สำเร็จ: ' + error.message);
+                }
+            });
+        }
+
+        // ปิด Modal
+        function closeModal() {
+            const modal = document.querySelector('.modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // ค้นหาสนาม
+        function searchFields(sportType = '') {
+            const query = sportType || document.getElementById('searchInput').value;
+            if (query.trim()) {
+                loadFields(query);
+            } else {
+                loadFields();
+            }
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // โหลดข้อมูลเมื่อเปิดหน้า
+            loadFields();
+        });
+
+        // ปิด modal เมื่อกด ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

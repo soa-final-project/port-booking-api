@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>การจองของฉัน - Spot4Sport</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .content {
+            padding: 50px 60px;
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            color: #2c3e50;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 12px 24px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .filter-tab:hover {
+            border-color: #132440;
+            color: #132440;
+        }
+
+        .filter-tab.active {
+            background: #132440;
+            color: white;
+            border-color: #132440;
+        }
+
+        .bookings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .booking-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .booking-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .booking-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #132440 0%, #2c3e50 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .booking-id {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .booking-status {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: #f39c12;
+            color: white;
+        }
+
+        .status-confirmed {
+            background: #27ae60;
+            color: white;
+        }
+
+        .status-cancelled {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .status-completed {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .booking-body {
+            padding: 25px;
+        }
+
+        .field-info {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .field-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .field-type {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .booking-details {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .detail-icon {
+            width: 20px;
+            height: 20px;
+            color: #132440;
+        }
+
+        .detail-label {
+            color: #666;
+            font-weight: 600;
+            min-width: 80px;
+        }
+
+        .detail-value {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .price-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .price-row:last-child {
+            margin-bottom: 0;
+            padding-top: 8px;
+            border-top: 2px dashed #dee2e6;
+            font-weight: bold;
+            color: #132440;
+        }
+
+        .price-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .price-value {
+            color: #2c3e50;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .booking-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-cancel {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .btn-details {
+            background: #132440;
+            color: white;
+        }
+
+        .btn-details:hover {
+            background: #0f1d33;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .note-section {
+            margin-top: 15px;
+            padding: 12px;
+            background: #fff9e6;
+            border-left: 4px solid #f39c12;
+            border-radius: 5px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        .btn-primary {
+            background: #132440;
+            color: white;
+            padding: 14px 32px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background: #0f1d33;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(19, 36, 64, 0.3);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #999;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #132440;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #2c3e50;
+            font-size: 22px;
+        }
+
+        .modal-body {
+            margin-bottom: 25px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-confirm {
+            flex: 1;
+            padding: 12px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-confirm:hover {
+            background: #c0392b;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 12px;
+            background: #95a5a6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 30px 20px;
+            }
+
+            .bookings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header h1 {
+                font-size: 24px;
+            }
+
+            .filter-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Include Menu (คัดลอกจาก menu.html) -->
+    <style>
+        .header {
+            background-color: #BF092F;
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid white;
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 55px;
+            right: 0;
+            background-color: #132440;
+            border-radius: 8px;
+            min-width: 180px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 1000;
+        }
+
+        .dropdown.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .dropdown-item {
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            display: block;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background-color: #0f1d33;
+        }
+
+        .dropdown-item.logout {
+            color: #e74c3c;
+            border-top: 1px solid #2c3e50;
+        }
+    </style>
+
+    <div class="header">
+        <div class="logo">SPOT4SPORT</div>
+        <div class="user-section">
+            <div class="user-menu">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=User" alt="User" class="user-avatar" id="userAvatar">
+                <div class="dropdown" id="dropdown">
+                    <div class="dropdown-item" onclick="window.location.href='/api/index/'">หน้าหลัก</div>
+                    <div class="dropdown-item" onclick="window.location.href='/api/my-bookings/'">ดูการจอง</div>
+                    <div class="dropdown-item logout" onclick="logout()">ออกจากระบบ</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <div class="page-header">
+            <h1>การจองของฉัน</h1>
+            <p>จัดการและติดตามการจองสนามกีฬาทั้งหมดของคุณ</p>
+        </div>
+
+        <div class="filter-tabs">
+            <div class="filter-tab active" onclick="filterBookings('all')">ทั้งหมด</div>
+            <div class="filter-tab" onclick="filterBookings('pending')">รอยืนยัน</div>
+            <div class="filter-tab" onclick="filterBookings('confirmed')">ยืนยันแล้ว</div>
+            <div class="filter-tab" onclick="filterBookings('completed')">เสร็จสิ้น</div>
+            <div class="filter-tab" onclick="filterBookings('cancelled')">ยกเลิก</div>
+        </div>
+
+        <div class="bookings-grid" id="bookingsGrid">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>กำลังโหลดข้อมูลการจอง...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allBookings = [];
+        let currentFilter = 'all';
+
+        // ฟังก์ชันเรียก API
+        async function callAPI(url, method = 'GET', data = null) {
+            const token = localStorage.getItem('access_token');
+            const config = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+            
+            if (token) {
+                config.headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            if (data) {
+                config.body = JSON.stringify(data);
+            }
+            
+            try {
+                const response = await fetch(url, config);
+                
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        localStorage.removeItem('access_token');
+                        localStorage.removeItem('refresh_token');
+                        window.location.href = '/api/login-form/';
+                        return;
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('API call failed:', error);
+                throw error;
+            }
+        }
+
+        // ตรวจสอบการล็อกอิน
+        function checkAuthentication() {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = '/api/login-form/';
+                return false;
+            }
+            return true;
+        }
+
+        // โหลดข้อมูลการจอง
+        async function loadBookings() {
+            if (!checkAuthentication()) return;
+
+            const grid = document.getElementById('bookingsGrid');
+            
+            try {
+                grid.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>กำลังโหลดข้อมูลการจอง...</p>
+                    </div>
+                `;
+                
+                const bookings = await callAPI('/api/bookings/');
+                allBookings = bookings;
+                
+                displayBookings(bookings);
+                
+            } catch (error) {
+                console.error('Error loading bookings:', error);
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                        <p style="color: #e74c3c; font-size: 18px; margin-bottom: 20px;">⚠️ เกิดข้อผิดพลาดในการโหลดข้อมูล</p>
+                        <button class="btn-primary" onclick="loadBookings()">ลองอีกครั้ง</button>
+                    </div>
+                `;
+            }
+        }
+
+        // แสดงการจอง
+        function displayBookings(bookings) {
+            const grid = document.getElementById('bookingsGrid');
+            
+            if (bookings.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-state-icon">📅</div>
+                        <h3>ยังไม่มีการจอง</h3>
+                        <p>คุณยังไม่มีการจองสนามกีฬา</p>
+                        <a href="/api/index/" class="btn-primary">เริ่มจองสนาม</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = bookings.map(booking => createBookingCard(booking)).join('');
+        }
+
+        // สร้างการ์ดการจอง
+        function createBookingCard(booking) {
+            const statusClass = `status-${booking.status}`;
+            const statusText = {
+                'pending': 'รอยืนยัน',
+                'confirmed': 'ยืนยันแล้ว',
+                'cancelled': 'ยกเลิก',
+                'completed': 'เสร็จสิ้น'
+            }[booking.status] || booking.status;
+
+            const canCancel = booking.status === 'pending' || booking.status === 'confirmed';
+            
+            const bookingDate = new Date(booking.booking_date);
+            const formattedDate = bookingDate.toLocaleDateString('th-TH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            return `
+                <div class="booking-card">
+                    <div class="booking-header">
+                        
+                        <div class="booking-status ${statusClass}">${statusText}</div>
+                    </div>
+                    
+                    <div class="booking-body">
+                        <div class="field-info">
+                            <div class="field-name">${booking.sport_field_detail.name}</div>
+                            <div class="field-type">${booking.sport_field_detail.sport_type_display}</div>
+                        </div>
+                        
+                        <div class="booking-details">
+                            <div class="detail-row">
+                                <span class="detail-icon">📅</span>
+                                <span class="detail-label">วันที่:</span>
+                                <span class="detail-value">${formattedDate}</span>
+                            </div>
+                            
+                            <div class="detail-row">
+                                <span class="detail-icon">🕐</span>
+                                <span class="detail-label">เวลา:</span>
+                                <span class="detail-value">${booking.start_time.substring(0,5)} - ${booking.end_time.substring(0,5)}</span>
+                            </div>
+                            
+                            <div class="detail-row">
+                                <span class="detail-icon">⏱️</span>
+                                <span class="detail-label">ระยะเวลา:</span>
+                                <span class="detail-value">${booking.hours} ชั่วโมง</span>
+                            </div>
+                        </div>
+                        
+                        <div class="price-info">
+                            <div class="price-row">
+                                <span class="price-label">ราคาต่อชั่วโมง:</span>
+                                <span class="price-value">฿${parseFloat(booking.sport_field_detail.price_per_hour).toFixed(2)}</span>
+                            </div>
+                            <div class="price-row">
+                                <span class="price-label">ราคารวมทั้งหมด:</span>
+                                <span class="price-value">฿${parseFloat(booking.total_price).toFixed(2)}</span>
+                            </div>
+                        </div>
+                        
+                        ${booking.note ? `
+                            <div class="note-section">
+                                <strong>หมายเหตุ:</strong> ${booking.note}
+                            </div>
+                        ` : ''}
+                        
+                        <div class="booking-actions">
+                            <button class="btn btn-details" onclick="viewBookingDetail(${booking.id})">
+                                รายละเอียด
+                            </button>
+                            <button 
+                                class="btn btn-cancel" 
+                                onclick="confirmCancelBooking(${booking.id})"
+                                ${canCancel ? '' : 'disabled'}
+                            >
+                                ${canCancel ? 'ยกเลิกการจอง' : 'ไม่สามารถยกเลิก'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // กรองการจอง
+        function filterBookings(status) {
+            currentFilter = status;
+            
+            // Update active tab
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            let filtered = allBookings;
+            if (status !== 'all') {
+                filtered = allBookings.filter(b => b.status === status);
+            }
+            
+            displayBookings(filtered);
+        }
+
+        // แสดง modal ยืนยันการยกเลิก
+        function confirmCancelBooking(bookingId) {
+            const modalHTML = `
+                <div class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>ยืนยันการยกเลิก</h2>
+                        </div>
+                        <div class="modal-body">
+                            <p>คุณแน่ใจหรือไม่ที่จะยกเลิกการจองนี้?</p>
+                            <p style="color: #e74c3c; margin-top: 10px;">
+                                <strong>หมายเหตุ:</strong> การยกเลิกนี้ไม่สามารถย้อนกลับได้
+                            </p>
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn-secondary" onclick="closeModal()">ไม่ยกเลิก</button>
+                            <button class="btn-confirm" onclick="cancelBooking(${bookingId})">ยืนยันการยกเลิก</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        // ยกเลิกการจอง
+        async function cancelBooking(bookingId) {
+            closeModal();
+            
+            try {
+                const result = await callAPI(`/api/bookings/${bookingId}/cancel/`, 'POST');
+                alert('ยกเลิกการจองสำเร็จ!');
+                loadBookings(); // โหลดข้อมูลใหม่
+            } catch (error) {
+                alert('เกิดข้อผิดพลาดในการยกเลิกการจอง: ' + error.message);
+            }
+        }
+
+        // ดูรายละเอียดการจอง
+        function viewBookingDetail(bookingId) {
+            const booking = allBookings.find(b => b.id === bookingId);
+            if (!booking) return;
+
+            const bookingDate = new Date(booking.booking_date);
+            const formattedDate = bookingDate.toLocaleDateString('th-TH', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            });
+
+            const statusText = {
+                'pending': 'รอยืนยัน',
+                'confirmed': 'ยืนยันแล้ว',
+                'cancelled': 'ยกเลิก',
+                'completed': 'เสร็จสิ้น'
+            }[booking.status];
+
+            const modalHTML = `
+                <div class="modal">
+                    <div class="modal-content" style="max-width: 500px;">
+                        <div class="modal-header">
+                            <h2>รายละเอียดการจอง #${booking.id}</h2>
+                        </div>
+                        <div class="modal-body" style="text-align: left;">
+                            <div style="margin-bottom: 15px;">
+                                <strong>สนาม:</strong> ${booking.sport_field_detail.name}<br>
+                                <strong>ประเภท:</strong> ${booking.sport_field_detail.sport_type_display}<br>
+                                <strong>สถานะ:</strong> ${statusText}
+                            </div>
+                            
+                            <div style="margin-bottom: 15px;">
+                                <strong>วันที่จอง:</strong> ${formattedDate}<br>
+                                <strong>เวลา:</strong> ${booking.start_time.substring(0,5)} - ${booking.end_time.substring(0,5)} น.<br>
+                                <strong>ระยะเวลา:</strong> ${booking.hours} ชั่วโมง
+                            </div>
+                            
+                            <div style="margin-bottom: 15px;">
+                                <strong>ราคาต่อชั่วโมง:</strong> ฿${parseFloat(booking.sport_field_detail.price_per_hour).toFixed(2)}<br>
+                                <strong>ราคารวม:</strong> ฿${parseFloat(booking.total_price).toFixed(2)}
+                            </div>
+                            
+                            ${booking.note ? `
+                                <div style="background: #fff9e6; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                                    <strong>หมายเหตุ:</strong><br>${booking.note}
+                                </div>
+                            ` : ''}
+                            
+                            <div style="font-size: 12px; color: #999;">
+                                <strong>จองเมื่อ:</strong> ${new Date(booking.created_at).toLocaleString('th-TH')}<br>
+                                <strong>อัพเดทล่าสุด:</strong> ${new Date(booking.updated_at).toLocaleString('th-TH')}
+                            </div>
+                        </div>
+                        <div class="modal-actions">
+                            <button class="btn-secondary" onclick="closeModal()" style="flex: none; width: 100%;">ปิด</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+
+        // ปิด modal
+        function closeModal() {
+            const modal = document.querySelector('.modal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        // Menu functions
+        function logout() {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            window.location.href = '/api/login-form/';
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // โหลดข้อมูลเมื่อเปิดหน้า
+            loadBookings();
+
+            // Toggle dropdown
+            const userAvatar = document.getElementById('userAvatar');
+            const dropdown = document.getElementById('dropdown');
+
+            if (userAvatar && dropdown) {
+                userAvatar.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    dropdown.classList.toggle('active');
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!dropdown.contains(e.target) && e.target !== userAvatar) {
+                        dropdown.classList.remove('active');
+                    }
+                });
+            }
+        });
+
+        // ปิด modal เมื่อกด ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // ปิด modal เมื่อคลิกนอก modal
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
