@@ -76,4 +76,46 @@ class Booking(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    class Meta:
+        verbose_name = 'การจอง'
+        verbose_name_plural = 'การจอง'
+        ordering = ['-booking_date', '-start_time']
     
+    def __str__(self):
+        return f"{self.user.username} - {self.sport_field.name} ({self.booking_date})"
+    
+    def clean(self):
+        """ตรวจสอบข้อมูลก่อนบันทึก"""
+        # ตรวจสอบเวลาเริ่มต้นต้องน้อยกว่าเวลาสิ้นสุด
+        if self.start_time >= self.end_time:
+            raise ValidationError('เวลาเริ่มต้นต้องน้อยกว่าเวลาสิ้นสุด')
+        
+        # ตรวจสอบว่าสนามถูกจองซ้ำหรือไม่
+        overlapping_bookings = Booking.objects.filter(
+            sport_field=self.sport_field,
+            booking_date=self.booking_date,
+            status__in=['pending', 'confirmed']
+        ).exclude(pk=self.pk)
+        
+        for booking in overlapping_bookings:
+            # ตรวจสอบช่วงเวลาทับซ้อน
+            if (self.start_time < booking.end_time and self.end_time > booking.start_time):
+                raise ValidationError(f'สนามถูกจองในช่วงเวลานี้แล้ว ({booking.start_time} - {booking.end_time})')
+    
+    def save(self, *args, **kwargs):
+    # คำนวณจำนวนชั่วโมงและราคารวม
+        if self.start_time and self.end_time:
+            start = datetime.combine(datetime.today(), self.start_time)
+            end = datetime.combine(datetime.today(), self.end_time)
+            duration = (end - start).total_seconds() / 3600
+            self.hours = round(duration, 1)
+    
+            # คำนวณราคารวมและปัดเศษเป็น 2 ตำแหน่ง
+            raw_total = Decimal(str(self.hours)) * self.sport_field.price_per_hour
+            self.total_price = Decimal(round(float(raw_total), 2))
+    
+        try:
+            self.full_clean()
+            super().save(*args, **kwargs)
+        except ValidationError as e:
+            raise e
