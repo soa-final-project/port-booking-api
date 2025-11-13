@@ -12,3 +12,16 @@ class UserAdmin(BaseUserAdmin):
     )
 
 
+@admin.register(SportField)
+class SportFieldAdmin(admin.ModelAdmin):
+    list_display = ['name', 'sport_type', 'capacity', 'price_per_hour', 'status']
+    list_filter = ['sport_type', 'status']
+    search_fields = ['name', 'description']
+
+
+@admin.register(Booking)
+class BookingAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'sport_field', 'booking_date', 'start_time', 'end_time', 'total_price', 'status']
+    list_filter = ['status', 'booking_date', 'sport_field']
+    search_fields = ['user__username', 'sport_field__name']
+    date_hierarchy = 'booking_date'
