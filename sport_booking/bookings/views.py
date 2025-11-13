@@ -89,3 +89,77 @@ class SportFieldViewSet(viewsets.ModelViewSet):
         })
 
 
+class BookingViewSet(viewsets.ModelViewSet):
+    """ViewSet สำหรับจัดการการจอง"""
+    queryset = Booking.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return BookingCreateSerializer
+        return BookingSerializer
+    
+    def get_queryset(self):
+        """แสดงเฉพาะการจองของตัวเอง (ยกเว้น Admin)"""
+        if self.request.user.role == 'admin':
+            return Booking.objects.all()
+        return Booking.objects.filter(user=self.request.user)
+    
+    def perform_create(self, serializer):
+        """บันทึกการจองพร้อมกำหนด user"""
+        serializer.save(user=self.request.user)
+    
+    @action(detail=False, methods=['get'])
+    def my_bookings(self, request):
+        """ดูการจองของตัวเอง"""
+        bookings = Booking.objects.filter(user=request.user)
+        serializer = self.get_serializer(bookings, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['post'])
+    def cancel(self, request, pk=None):
+        """ยกเลิกการจอง"""
+        booking = self.get_object()
+        
+        # ตรวจสอบว่าเป็นเจ้าของการจองหรือ Admin
+        if booking.user != request.user and request.user.role != 'admin':
+            return Response(
+                {'error': 'คุณไม่มีสิทธิ์ยกเลิกการจองนี้'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        # ตรวจสอบว่าสามารถยกเลิกได้หรือไม่
+        if booking.status in ['cancelled', 'completed']:
+            return Response(
+                {'error': f'ไม่สามารถยกเลิกการจองที่มีสถานะ {booking.get_status_display()}'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        booking.status = 'cancelled'
+        booking.save()
+        
+        serializer = self.get_serializer(booking)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['post'])
+    def confirm(self, request, pk=None):
+        """ยืนยันการจอง (Admin เท่านั้น)"""
+        if request.user.role != 'admin':
+            return Response(
+                {'error': 'เฉพาะ Admin เท่านั้นที่สามารถยืนยันการจองได้'},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        booking = self.get_object()
+        
+        if booking.status != 'pending':
+            return Response(
+                {'error': 'สามารถยืนยันได้เฉพาะการจองที่รอยืนยันเท่านั้น'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        booking.status = 'confirmed'
+        booking.save()
+        
+        serializer = self.get_serializer(booking)
+        return Response(serializer.data)
